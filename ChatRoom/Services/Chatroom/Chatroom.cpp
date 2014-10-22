@@ -98,7 +98,7 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
             server->sendMessageToClient("Failed to delete room. Room must be empty first.\n", client);
         }
     } else if (command.compare("help") == 0) {
-        std::string helpDialog = "You can use commands like:\n   /rooms - lists all the rooms on the chat server\n   /join {room name} - adds you to a room\n   /leave {room name} - removes you from a room\n   /leave - removes you from all of your active rooms\n   /create {new room name} - creates a new room\n   /delete {room name} - deletes a room\n";
+        std::string helpDialog = "You can use commands like:\n   /rooms - lists all the rooms on the chat server\n   /join {room name} - adds you to a room\n   /leave {room name} - removes you from a room\n   /leave - removes you from all of your active rooms\n   /create {new room name} - creates a new room\n   /delete {room name} - deletes a room\n   /quit - quits the chat server";
         server->sendMessageToClient(helpDialog, client);
     }
 }
