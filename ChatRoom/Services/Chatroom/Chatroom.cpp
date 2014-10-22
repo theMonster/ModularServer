@@ -187,7 +187,7 @@ struct Room* Chatroom::findRoomForName(std::string name) {
 
 struct Room* Chatroom::findRoomForName(std::string name, int& index) {
     // find room for name
-    struct Room *r = nullptr;
+    struct Room *r = NULL;
     for (int i = 0; i < rooms.size(); ++i) {
         if (rooms[i]->roomName.compare(name) == 0) {
             // found the room!
