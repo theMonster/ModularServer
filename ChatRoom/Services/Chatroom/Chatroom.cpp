@@ -87,7 +87,7 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
         // delete the room (only if there is no one in the room)
         if (indexForRoom == -1) {
             // let user know that it failed because the room doesn't exist.
-            server->sendMessageToClient("Failed to delete room. Room does not exist.", client);
+            server->sendMessageToClient("Failed to delete room. Room does not exist.\n", client);
         } else if (rooms[indexForRoom]->clients.size() <= 0) {
             rooms.erase(rooms.begin() + indexForRoom);
             delete r;
