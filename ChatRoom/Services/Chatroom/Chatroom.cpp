@@ -63,11 +63,15 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
         if (r) {
             // remove user from chatroom
             removeClientFromRoom(client, r);
-        } else {
+        } else if (parameters.compare("") == 0) {
             // user wants to be removed from all rooms
             for (int i = 0; i < rooms.size(); ++i) {
                 removeClientFromRoom(client, rooms[i]);
             }
+        } else {
+            char tmp[1024];
+            sprintf(tmp, "No room named \"%s\" exists.\n", parameters.c_str());
+            server->sendMessageToClient(tmp, client);
         }
     } else if (command.compare("create") == 0) {
         // check if room name is taken
