@@ -206,7 +206,7 @@ void Chatroom::removeClientFromRoom(Client* client, struct Room* room) {
     // check if user exists in usernames...
     if (usernames[client] != NULL) {
         char buff[1024];
-        sprintf(buff, "\t* \"%s\" has left room.", usernames[client]->c_str());
+        sprintf(buff, "\t* \"%s\" has left room.\n", usernames[client]->c_str());
         server->sendMessageToClients(buff, room->clients);
     }
     
