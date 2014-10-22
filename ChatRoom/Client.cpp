@@ -44,6 +44,9 @@ bool Client::sendMessage(std::string message) {
 
 void findAndRepalceString(std::string& target, const std::string& oldStr, const std::string& newStr)
 {
+    if (oldStr.compare(newStr) == 0) {
+        return; // don't process this request because it doesn't make sense.
+    }
     size_t pos = 0;
     while((pos = target.find(oldStr, pos)) != std::string::npos)
     {
