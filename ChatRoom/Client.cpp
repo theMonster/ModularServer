@@ -44,7 +44,7 @@ bool Client::sendMessage(std::string message) {
 
 void findAndRepalceString(std::string& target, const std::string& oldStr, const std::string& newStr)
 {
-    if (oldStr.compare(newStr) == 0 || oldStr.compare("")) { // it doesn't make sense to replaces something with itself and it doesn't make any sense to remove nothing.
+    if (oldStr.compare(newStr) == 0 || oldStr.compare("") == 0) { // it doesn't make sense to replaces something with itself and it doesn't make any sense to remove nothing.
         return; // don't process this request because it doesn't make sense.
     }
     size_t pos = 0;
@@ -79,9 +79,6 @@ void* listenToClient(void* client_t) {
     int client = clientObj->sock;
     
     printf("Connected to client #%i\n", client);
-    
-    // send info message
-    
     
     while(1)
     {
