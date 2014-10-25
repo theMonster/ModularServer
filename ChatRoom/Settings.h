@@ -12,6 +12,6 @@
 #define servAssert(s, error_code) puts(s); exit(error_code)
 #define MAX_CONNECTIONS 100
 #define PORT_NO 8000
-#define CONNECTION_BUFFER_SIZE 1024
+#define CONNECTION_BUFFER_SIZE 2048
 
 #endif

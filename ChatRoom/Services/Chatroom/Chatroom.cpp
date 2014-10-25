@@ -8,6 +8,7 @@
 
 #include "Server.h"
 #include "Chatroom.h"
+#include "Settings.h"
 #include <map>
 #include <stdio.h>
 
@@ -42,8 +43,8 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
         // make string of all rooms
         for (int i = 0; i < rooms.size(); ++i) {
             struct Room* r = rooms[i];
-            char tmp[1024];
-            sprintf(tmp, "%s\t*%s (%lu)\n", openRooms.c_str(), r->roomName.c_str(), r->clients.size());
+            char tmp[CONNECTION_BUFFER_SIZE];
+            snprintf(tmp, CONNECTION_BUFFER_SIZE, "%s\t*%s (%lu)\n", openRooms.c_str(), r->roomName.c_str(), r->clients.size());
             openRooms = std::string(tmp);
         }
         // send list of rooms to client (make sure to allocate a new string on the heap)
@@ -54,8 +55,8 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
         if (r) { // found it
             joinRoom(r, client);
         } else { // didn't find it
-            char tmp[1024];
-            sprintf(tmp, "No room named \"%s\" exists.\n", parameters.c_str());
+            char tmp[CONNECTION_BUFFER_SIZE];
+            snprintf(tmp, CONNECTION_BUFFER_SIZE, "No room named \"%s\" exists.\n", parameters.c_str());
             server->sendMessageToClient(tmp, client);
         }
     } else if (command.compare("leave") == 0) {
@@ -69,8 +70,8 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
                 removeClientFromRoom(client, rooms[i]);
             }
         } else {
-            char tmp[1024];
-            sprintf(tmp, "No room named \"%s\" exists.\n", parameters.c_str());
+            char tmp[CONNECTION_BUFFER_SIZE];
+            snprintf(tmp, CONNECTION_BUFFER_SIZE, "No room named \"%s\" exists.\n", parameters.c_str());
             server->sendMessageToClient(tmp, client);
         }
     } else if (command.compare("create") == 0) {
@@ -122,8 +123,8 @@ void Chatroom::recievedMessageFromClient(std::string message, void *client_t) {
                 // check if the user is in this room:
                 if (r->clients[j] == client) {
                     // the user is in this room, broadcast message:
-                    char tmp[1024];
-                    sprintf(tmp, "%s<%s>: %s\n", usernames[client]->c_str(), r->roomName.c_str(), message.c_str());
+                    char tmp[CONNECTION_BUFFER_SIZE];
+                    snprintf(tmp, CONNECTION_BUFFER_SIZE, "%s<%s>: %s\n", usernames[client]->c_str(), r->roomName.c_str(), message.c_str());
                     server->sendMessageToClients(tmp, r->clients);
                 }
             }
@@ -172,14 +173,14 @@ void Chatroom::joinRoom(struct Room* room, Client *client) {
         else format = "%s\t* %s\n";
         
         const char *username = usernames[c]->c_str();
-        char tmp[1024];
-        sprintf(tmp, format.c_str(), listOfUsersInChatroom.c_str(), username);
+        char tmp[CONNECTION_BUFFER_SIZE];
+        snprintf(tmp, CONNECTION_BUFFER_SIZE, format.c_str(), listOfUsersInChatroom.c_str(), username);
         listOfUsersInChatroom = std::string(tmp);
     }
     
     // send welcome message
-    char buff[1024];
-    sprintf(buff, "%s: Welcome %s!\nUsers currently in this chatroom:\n%s\n", room->roomName.c_str(), usernames[client]->c_str(), listOfUsersInChatroom.c_str());
+    char buff[CONNECTION_BUFFER_SIZE];
+    snprintf(buff, CONNECTION_BUFFER_SIZE, "%s: Welcome %s!\nUsers currently in this chatroom:\n%s\n", room->roomName.c_str(), usernames[client]->c_str(), listOfUsersInChatroom.c_str());
     server->sendMessageToClient(buff, client);
 }
 
@@ -209,8 +210,8 @@ void Chatroom::removeClientFromRoom(Client* client, struct Room* room) {
     // show user left message to remaining users (and current client)
     // check if user exists in usernames...
     if (usernames[client] != NULL) {
-        char buff[1024];
-        sprintf(buff, "\t* \"%s\" has left room.\n", usernames[client]->c_str());
+        char buff[CONNECTION_BUFFER_SIZE];
+        snprintf(buff, CONNECTION_BUFFER_SIZE, "\t* \"%s\" has left room.\n", usernames[client]->c_str());
         server->sendMessageToClients(buff, room->clients);
     }
     
