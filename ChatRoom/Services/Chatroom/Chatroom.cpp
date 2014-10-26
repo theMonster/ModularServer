@@ -111,9 +111,25 @@ void Chatroom::recievedCommand(std::string command, std::vector<std::string> par
 void Chatroom::recievedMessageFromClient(std::string message, void *client_t) {
     Server* server = (Server*)this->server;
     Client* client = (Client*)client_t;
-    if (!usernames[client] || usernames[client]->empty()) {
-        // if client doesn't have a name yet, we'll assume this message is the desired username...
-        usernames[client] = new std::string(message);
+    if (!usernames[client] || usernames[client]->empty()) { // the user isn't associated with a username
+        // check if username exists
+        bool doesUsernameExist = false;
+        for(auto i = usernames.begin(); i != usernames.end(); i++) {
+            if (i->second && i->second->compare(message) == 0) {
+                doesUsernameExist = true;
+                break;
+            }
+        }
+        
+        // handle the case
+        if (!doesUsernameExist) {
+            // if client doesn't have a name yet, we'll assume this message is the desired username...
+            usernames[client] = new std::string(message);
+        } else {
+            char tmp[CONNECTION_BUFFER_SIZE];
+            snprintf(tmp, CONNECTION_BUFFER_SIZE, "\"%s\" is already in use, please pick another.\nUsername?: ", message.c_str());
+            server->sendMessageToClient(tmp, client);
+        }
     } else {
         // broadcast message to all rooms that user belongs to
         for (int i = 0; i < rooms.size(); ++i) {
@@ -135,9 +151,19 @@ void Chatroom::recievedMessageFromClient(std::string message, void *client_t) {
 void Chatroom::newClientDidConnectToServer(void *client_t) {
     Client* client = (Client*)client_t;
     Server* server = (Server*)this->server;
-    std::string initialLoginMessage = "===============================\nWelcome to the PWNED chat server!\nTIP: (type \"/help\" for help)\nUsername?: ";
+    std::string initialLoginMessage = "===============================\nWelcome to the PWNED chat server!\nTIP: (type \"/help\" for help)\n";
+    // ask for username if the user doesn't have one by default.
+    if (client->username && client->username->empty()) {
+        initialLoginMessage.append("Username?: ");
+    }
+    // send the message
     server->sendMessageToClient(initialLoginMessage, client);
     server->startListeningToClient(client, this); // TODO: handle case that client doesn't want to have this service listen
+    
+    // since the user does have a username... we want to fake the message send
+    if (client->username && !client->username->empty()) { // otherwise, fake message reciept for client setting up username
+        recievedMessageFromClient(*client->username, client);
+    }
 }
 
 void Chatroom::clientDidDisconnectFromServer(void *client_t) {
@@ -145,6 +171,9 @@ void Chatroom::clientDidDisconnectFromServer(void *client_t) {
     Server* server = (Server*)this->server;
     
     server->sendMessageToClient("BYE!\n", client);
+    
+    // remove username
+    usernames.erase(client);
     
     // remove client from all rooms
     for (int i = 0; i < rooms.size(); ++i) {
@@ -169,7 +198,7 @@ void Chatroom::joinRoom(struct Room* room, Client *client) {
         Client* c = room->clients[i];
         
         std::string format;
-        if (c == client) format = "%s\t*%s <-- this is you\n";
+        if (c == client) format = "%s\t* %s <-- this is you\n";
         else format = "%s\t* %s\n";
         
         const char *username = usernames[c]->c_str();

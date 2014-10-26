@@ -42,6 +42,7 @@ public:
     bool startListeningToClient(Client* client, Service* service);
     void stopListeningToClient(Client* client, Service* service);
     // client delegate stuff
+    void clientDidConnect(Client *client);
     void clientDidSendMessage(std::string message, Client* client);
     void clientDidSendCommand(std::string command, std::vector<std::string> params, std::string parameters, Client* client);
     void clientDidDisconnect(Client* client);

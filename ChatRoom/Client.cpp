@@ -40,6 +40,7 @@ bool Client::sendMessage(std::string message) {
     return success;
 }
 
+#pragma mark - Username
 /********************** LAZY UTILS / TODO: PLACE IN IT'S OWN CLASS *********************/
 
 void findAndRepalceString(std::string& target, const std::string& oldStr, const std::string& newStr)
@@ -77,8 +78,11 @@ void* listenToClient(void* client_t) {
     Server* server = (Server*)clientObj->server;
     long read_size;
     int client = clientObj->sock;
+    clientObj->username = new std::string(getlogin());
     
     printf("Connected to client #%i\n", client);
+
+    server->clientDidConnect(clientObj);
     
     while(1)
     {
@@ -93,7 +97,7 @@ void* listenToClient(void* client_t) {
             
             // log to console
             printf("message from client #%i: \"%s\"\n", client, message.c_str());
-
+            
             // check for '/quit' (it's a command, but it's not implemented by a service, instead it's implemented by the client to ensure security)
             if (message.compare("/quit") == 0) {
                 // client has disconected.

@@ -26,6 +26,7 @@ public:
     // used to allow or dis-allow certain Services from hearing everything you say (security measure)
     bool shouldAuthenticateService(void* service);
     bool sendMessage(std::string message);
+    std::string* username;
 };
 
 #endif /* defined(__ChatRoom__Client__) */

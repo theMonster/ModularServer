@@ -67,10 +67,6 @@ void* acceptanceFunction(void* server_t) {
         // create client
         Client* client = new Client(clientSock, clientAddress, server);
         server->clients.push_back(client);
-        // notify all services of the new client
-        for (int i = 0; i < server->services.size(); ++i) {
-            server->services[i]->newClientDidConnectToServer(client);
-        }
     }
     
     return NULL;
@@ -137,6 +133,13 @@ void Server::clientDidSendCommand(std::string command, std::vector<std::string> 
     Service *service = commands[command];
     if (service) service->recievedCommand(command, params, parameters, client);
     else sendMessageToClient("Command does not exist.\n", client);
+}
+
+void Server::clientDidConnect(Client *client) {
+    // notify all services of the new client
+    for (int i = 0; i < services.size(); ++i) {
+        services[i]->newClientDidConnectToServer(client);
+    }
 }
 
 void Server::clientDidDisconnect(Client *client) {
