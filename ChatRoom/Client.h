@@ -23,7 +23,6 @@ public:
     struct sockaddr_in* sockAddress;
     /// functions:
     Client(int sock, struct sockaddr_in* sockAddress, void* server);
-//    ~Client(); // TODO
     // used to allow or dis-allow certain Services from hearing everything you say (security measure)
     bool shouldAuthenticateService(void* service);
     bool sendMessage(std::string message);

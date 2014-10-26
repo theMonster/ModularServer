@@ -100,7 +100,7 @@ void* listenToClient(void* client_t) {
                 server->clientDidDisconnect(clientObj);
                 close(clientObj->sock);
                 delete clientObj;
-                printf("Client #%i has quit\n", client);
+                printf("Client #%i has quit.\n", client);
                 return NULL; // breaks out of loop and destroys thread
             }
             
