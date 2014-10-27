@@ -78,10 +78,9 @@ void* listenToClient(void* client_t) {
     Server* server = (Server*)clientObj->server;
     long read_size;
     int client = clientObj->sock;
-    clientObj->username = new std::string(getlogin());
     
     printf("Connected to client #%i\n", client);
-
+    
     server->clientDidConnect(clientObj);
     
     while(1)
@@ -94,10 +93,10 @@ void* listenToClient(void* client_t) {
             findAndRepalceString(message, "\n", "");
             findAndRepalceString(message, "\r", "");
             std::vector<std::string> stringsSplitBySpace = split(message, ' ');
-            
+
             // log to console
             printf("message from client #%i: \"%s\"\n", client, message.c_str());
-            
+
             // check for '/quit' (it's a command, but it's not implemented by a service, instead it's implemented by the client to ensure security)
             if (message.compare("/quit") == 0) {
                 // client has disconected.
@@ -107,7 +106,7 @@ void* listenToClient(void* client_t) {
                 printf("Client #%i has quit.\n", client);
                 return NULL; // breaks out of loop and destroys thread
             }
-            
+
             // process message as command, or as normal message
             char prefix = (stringsSplitBySpace.size() > 0) ? stringsSplitBySpace[0][0] : '\0';
             if (prefix == '/') { // this is a command
