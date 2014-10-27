@@ -19,6 +19,7 @@
 void* listenToClient(void* client);
 
 Client::Client(int sock, struct sockaddr_in* sockAddress, void* server) {
+    this->username = NULL;
     this->sock = sock;
     this->sockAddress = sockAddress;
     this->server = (Client*)server;
