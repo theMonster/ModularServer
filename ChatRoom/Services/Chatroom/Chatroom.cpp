@@ -153,7 +153,7 @@ void Chatroom::newClientDidConnectToServer(void *client_t) {
     Server* server = (Server*)this->server;
     std::string initialLoginMessage = "===============================\nWelcome to the PWNED chat server!\nTIP: (type \"/help\" for help)\n";
     // ask for username if the user doesn't have one by default.
-    if (client->username && client->username->empty()) {
+    if (!client->username || client->username->empty()) {
         initialLoginMessage.append("Username?: ");
     }
     // send the message
